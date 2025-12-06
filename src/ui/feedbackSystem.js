@@ -1,6 +1,7 @@
 export class FeedbackSystem {
     constructor() {
         this.feedbackContainer = null;
+        this.activePopupTimeout = null;
         this.createFeedbackContainer();
         this.encouragementMessages = {
             milestone: [
@@ -51,24 +52,25 @@ export class FeedbackSystem {
     }
 
     showComboFeedback(combo, mode) {
+        if (combo < 5) return false;
+        let message = null;
+        let duration = 2000;
         if (combo >= 5) {
-            let message = '';
-            let duration = 200;
-            
-            if (combo >= 20) {
+            if ((combo % 20) === 0) {
                 message = '🔥 LEGENDARY COMBO!';
-                duration = 200;
-            } else if (combo >= 15) {
+            } else if ((combo % 15) === 0) {
                 message = '⚡ INCREDIBLE STREAK!';
-                duration = 200;
-            } else if (combo >= 10) {
+            } else if ((combo % 10) === 0) {
                 message = '🌟 AMAZING COMBO!';
-                duration = 200;
-            } else if (combo >= 5) {
+            }else if ((combo % 5) === 0) {
                 message = '💫 Great Streak!';
+            }else if((combo % 3) === 0){
+                message = this.getRandomMessage(this.encouragementMessages.milestone)
             }
-            
+
+            if(!message) return false;
             this.showPopup(message, 'combo', duration);
+            return true;
         }
     }
 
@@ -83,6 +85,18 @@ export class FeedbackSystem {
     }
 
     showPopup(message, type, duration = 2000) {
+        if (!message) return;
+
+        if(this.activePopupTimeout){
+            clearTimeout(this.activePopupTimeout);
+            this.activePopupTimeout = null;
+        }
+
+        while(this.feedbackContainer.firstChild){
+            this.feedbackContainer.removeChild(this.feedbackContainer.firstChild);
+        }
+
+
         const popup = document.createElement('div');
         popup.className = `feedback-popup feedback-${type}`;
         popup.textContent = message;
@@ -93,7 +107,7 @@ export class FeedbackSystem {
             popup.classList.add('show');
         });
         
-        setTimeout(() => {
+        this.activePopupTimeout = setTimeout(() => {
             popup.classList.remove('show');
             popup.classList.add('hide');
             setTimeout(() => {
@@ -108,7 +122,6 @@ export class FeedbackSystem {
         return messages[Math.floor(Math.random() * messages.length)];
     }
 
-    // Focus-based feedback
     showFocusLevelFeedback(focusIndex) {
         let message = '';
         let type = 'focus';
