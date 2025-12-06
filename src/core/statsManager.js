@@ -175,7 +175,8 @@ export class StatsManager {
         const combo = this.currentGameStats.combo;
         
         const avgScore = 10; 
-        const avgPerfectPercentage = 20; 
+        const avgPerfectPercentage = 20;
+        const avgErrorPercentage = 30;
         const avgCPM = 15; 
         const avgCombo = 5; 
         
