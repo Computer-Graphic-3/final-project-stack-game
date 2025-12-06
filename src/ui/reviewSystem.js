@@ -91,7 +91,6 @@ export class ReviewSystem {
         document.body.appendChild(modal);
         this.reviewModal = modal;
         
-        // Add event listeners
         this.setupEventListeners();
     }
 
@@ -101,8 +100,14 @@ export class ReviewSystem {
         const playAgainBtn = this.reviewModal.querySelector('#play-again');
         const viewStatsBtn = this.reviewModal.querySelector('#view-stats');
         
-        closeBtn.addEventListener('click', () => this.hide());
-        backdrop.addEventListener('click', () => this.hide());
+        closeBtn.addEventListener('click', () => {
+            this.hide();
+            this.onPlayAgain?.();
+        });
+        backdrop.addEventListener('click', () => {
+            this.hide();
+            this.onPlayAgain?.();
+        });
         
         playAgainBtn.addEventListener('click', () => {
             this.hide();
